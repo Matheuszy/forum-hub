@@ -53,4 +53,7 @@ public class Usuario implements UserDetails {
     public String getDestaques() {
         return destaques;
     }
+    public Long getId() {
+        return id;
+    }
 }
