@@ -1,0 +1,40 @@
+package br.com.forum_hub.domain.usuario;
+
+import br.com.forum_hub.infra.exception.RegraDeNegocioException;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+
+@Service
+public class TokenService {
+
+    @Value("${SECRET_KEY}")
+    private String secretKey;
+
+
+    public String generateToken(Usuario usuario) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+            return JWT.create()
+                    .withIssuer("forum-hub")
+                    .withSubject(usuario.getUsername())
+                    .withExpiresAt(expiracao(30))
+                    .sign(algorithm);
+        } catch (JWTCreationException e) {
+            throw new RegraDeNegocioException("Erro ao gerar token");
+        }
+    }
+
+    private Instant expiracao(Integer i) {
+        return LocalDateTime.now().plusMinutes(i).toInstant(ZoneOffset.of("-03:00"));
+    }
+
+
+}

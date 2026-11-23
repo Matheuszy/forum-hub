@@ -1,6 +1,8 @@
 package br.com.forum_hub.controller;
 
 import br.com.forum_hub.domain.auth.DadosLogin;
+import br.com.forum_hub.domain.usuario.TokenService;
+import br.com.forum_hub.domain.usuario.Usuario;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,19 +15,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class AutenticatorController {
 
     private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
-    public AutenticatorController(AuthenticationManager authenticationManager) {
+
+    public AutenticatorController(AuthenticationManager authenticationManager, TokenService tokenService) {
+        this.tokenService = tokenService;
         this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> autenticate(@Valid @RequestBody DadosLogin dados) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+    public ResponseEntity<String> autenticate(@Valid @RequestBody DadosLogin dados) {
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 dados.email(),
                 dados.senha()
         );
-        var authentication = authenticationManager.authenticate(token);
-        return ResponseEntity.ok(authentication);
+        var authentication = authenticationManager.authenticate(authToken);
+        String token = tokenService.generateToken((Usuario) authentication.getPrincipal());
+        return ResponseEntity.ok(token);
 
     }
 }
