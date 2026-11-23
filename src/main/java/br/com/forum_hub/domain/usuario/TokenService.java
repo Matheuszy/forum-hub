@@ -55,4 +55,16 @@ public class TokenService {
     }
 
 
+    public String generateRefreshToken(Usuario usuario) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+            return JWT.create()
+                    .withIssuer("forum-hub")
+                    .withSubject(usuario.getId().toString())
+                    .withExpiresAt(expiracao(480))
+                    .sign(algorithm);
+        } catch (JWTCreationException e) {
+            throw new RegraDeNegocioException("Erro ao gerar token de refresh");
+        }
+    }
 }
