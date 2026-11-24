@@ -34,7 +34,7 @@ public class TokenFilter extends OncePerRequestFilter {
 
         if (token != null){
             String email = tokenService.verificarToken(token);
-            Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email).orElseThrow();
+            Usuario usuario = usuarioRepository.findByEmailIgnoreCaseAndVericadoTrue(email).orElseThrow();
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     usuario,
