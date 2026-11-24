@@ -4,6 +4,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -23,6 +24,18 @@ public class Usuario implements UserDetails {
     private String email;
     private String senha;
 
+    public  Usuario() {
+
+    }
+
+    public Usuario(@Valid DadosCadastroUsuario dados, String senhaCriptografada) {
+        this.email = dados.email();
+        this.senha = senhaCriptografada;
+        this.nomeCompleto = dados.nomeCompleto();
+        this.nickName = dados.nickName();
+        this.biografia = dados.biografia();
+        this.destaques = dados.destaques();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
